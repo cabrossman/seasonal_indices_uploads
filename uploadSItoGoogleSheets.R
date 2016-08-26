@@ -22,7 +22,7 @@ print("..........................")
 #download PV data per geo per month
 pvData <- getGeoPortalPV()
 #calculate SI
-seasonal_indices <- seasonalCalc(pvData,last12 = TRUE )
+seasonal_indices <- seasonalCalc(pvData)
 #writeCSV then upload to google sheets
 write.csv(seasonal_indices,"seasonal_indices.csv",row.names = FALSE)
 gs_upload("seasonal_indices.csv",verbose = FALSE)
