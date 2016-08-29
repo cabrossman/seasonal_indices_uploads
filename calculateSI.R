@@ -8,8 +8,8 @@ seasonalCalc <- function(df){
   
   #calculate key
   df <- df %>% mutate(key = paste0(portal,"-",geo)) 
-  #get average page views per key
-  df2 <- df %>% group_by(key) %>% summarise(avgPerKey = mean(pageViews))
+  #get average page views per key. Use last12 months to set average
+  df2 <- df %>% group_by(key) %>% filter(row_number(desc(date)) <= 12) %>% summarise(avgPerKey = mean(pageViews))
   #get ratio of PV in key at time t to avg pv per key
   df3 <- df %>% inner_join(df2,by="key") %>% mutate(SI = pageViews/avgPerKey, keyMon = paste0(key,"-",month)) %>%
     group_by(key,keyMon) %>% summarise(avgSIKeyMonth = mean(SI))
@@ -19,7 +19,9 @@ seasonalCalc <- function(df){
   df5 <- df3 %>% inner_join(df4, by = "key") %>% mutate(NormalizedSI = (avgSIKeyMonth*12)/totSIKeyMonth)
   #join with data
   df6 <- df %>% mutate(keyMon = paste0(key,"-",month)) %>% distinct(keyMon, portal, geo, month) %>%
-    inner_join(df5, by = "keyMon") %>% select(portal, geo, month,NormalizedSI) %>% arrange(portal, geo, month)
+    inner_join(df5, by = "keyMon") %>% select(portal, geo, month,NormalizedSI) %>% arrange(portal, geo, month) %>% mutate(pctTot = NormalizedSI/12)
+  #join with data
+
   
   return(df6)
 }
