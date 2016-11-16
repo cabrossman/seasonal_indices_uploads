@@ -23,8 +23,13 @@ print("..........................")
 pvData <- getGeoPortalPV()
 #calculate SI
 seasonal_indices <- seasonalCalc(pvData)
+
+
+si <- gs_title('seasonal_indices')
+si %>% gs_ws_delete('seasonal_indices') %>% gs_ws_new('seasonal_indices', input = seasonal_indices, trim = TRUE)
+
 #writeCSV then upload to google sheets
-fname = "seasonal_indices.csv"
-write.csv(seasonal_indices,fname,row.names = FALSE)
-gs_upload(fname,verbose = FALSE)
-uploadFileToKeboolaFTP(getwd(),fname)
+# fname = "seasonal_indices.csv"
+# write.csv(seasonal_indices,fname,row.names = FALSE)
+# gs_upload(fname,verbose = FALSE)
+# uploadFileToKeboolaFTP(getwd(),fname)
